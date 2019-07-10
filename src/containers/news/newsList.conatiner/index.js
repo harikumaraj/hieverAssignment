@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {View, FlatList, Text} from "react-native";
+import {View, FlatList, Text, ActivityIndicator} from "react-native";
 import {connect} from "react-redux";
 
 import Header from "../../../components/Header"
 import FlatListItem from "../../../components/FlatListItem";
+import Search from "../../../components/Search"
 
 import {getNewsListAction, setNewsDetails} from "../../../actions/news.actions";
 import {navigateTo} from "../../../utils"
@@ -25,6 +26,13 @@ const defaultProps = {
 
 class NewsList extends React.Component {
 
+    constructor(props){
+        super(props);
+        this.state = {
+            isShowSearch: false
+        };
+    }
+
     componentDidMount() {
         this.props.handleGetNewsList();
     }
@@ -34,13 +42,26 @@ class NewsList extends React.Component {
         navigateTo("newsDetails");
     }
 
+    onSearchChange = (searchString) => {
+        this.props.handleGetNewsList(searchString);
+    }
+    
+    handleOnPressRightIcon = () => {
+        this.setState((prevState) => {
+            return ({isShowSearch: !prevState.isShowSearch});
+        })
+    }
+
     render () {
         return (
             <View style={styles.container}>
                 <Header
                     title={"Home"}
                     rightIcon={"search"}
+                    onPressRightIcon={this.handleOnPressRightIcon}
                 />
+                {this.state.isShowSearch && <Search onSearchChange={this.onSearchChange}/>}
+                {this.props.loading && <ActivityIndicator size="small" color="#000000" />}
                 <FlatList
                     data={this.props.newsList}
                     ListHeaderComponent={<Text style={styles.titleStyle}>Your Daily Read</Text>}
@@ -58,11 +79,12 @@ class NewsList extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    newsList: state.news.newsList
+    newsList: state.news.newsList,
+    loading: state.news.loading
 });
 
 const mapDispatchToProps = dispatch => ({
-    handleGetNewsList: () => dispatch(getNewsListAction()),
+    handleGetNewsList: (searchString) => dispatch(getNewsListAction(searchString)),
     handleSetNewsDetails: (item) => dispatch(setNewsDetails(item))
 });
 

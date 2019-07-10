@@ -2,9 +2,13 @@ import fetchApi from "../api";
 import {FETCH_NEWS_LIST, SET_NEWS_DETAILS} from "./action-types";
 import {SUCCESS, FAILURE, LOADING} from "../utils/index";
 
-export const getNewsListAction = () => (dispatch) => {
+export const getNewsListAction = (searchString = "") => (dispatch) => {
+    console.log(searchString);
     dispatch({type: LOADING(FETCH_NEWS_LIST)});
-    return fetchApi("top-headlines?country=de&category=business&apiKey=9b64bcfe576047ba8e5bb7fd24c9e526", "GET").then((response) => {
+    // hardcoded "bitcoin" if no search string available
+    let url = `everything?q=${searchString.length > 0 ? searchString : "bitcoin"}&from=2019-06-10&sortBy=publishedAt&apiKey=9b64bcfe576047ba8e5bb7fd24c9e526`;
+
+    return fetchApi(url, "GET").then((response) => {
         dispatch({
             type: SUCCESS(FETCH_NEWS_LIST),
             payload: response.articles,

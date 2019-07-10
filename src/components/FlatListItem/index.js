@@ -22,7 +22,6 @@ class ListItem extends Component {
 
     render() {
         const {item, index} = this.props;
-        console.log(item);
         return (
             <TouchableOpacity key={`flat-list-item-${index}`} onPress={this.props.onItemPress} style={styles.listItemContainer}>
                 <View style={styles.textContainer}>

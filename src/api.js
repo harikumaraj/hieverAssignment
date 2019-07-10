@@ -7,6 +7,7 @@ const fetchApi = async (url, method, reqHeaders = null, reqBody = null) => {
     try {
         const URL = `https://newsapi.org/v2/${url}`;
         let headers = {...defaultHeaders};
+        console.log(URL);
         if (reqHeaders) {
             headers = {
                 ...headers,
